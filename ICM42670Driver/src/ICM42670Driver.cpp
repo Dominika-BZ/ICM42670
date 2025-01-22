@@ -23,7 +23,13 @@ enum struct Registers // underlyingtype?
 
 };
 
-ICM42670Driver::ICM42670Driver () // lista inicjalizacyjna
+ICM42670Driver::ICM42670Driver(i2c_instance_t &i2cDriver, std::uint8_t address) :
+    _i2cDriver{i2cDriver}, _address{address}
+    {
+    }
+
+int ICM42670Driver::StartAccel(std::uint16_t odr, std::uint16_t fsr)
 {
+
 }
 } // namespace icm
