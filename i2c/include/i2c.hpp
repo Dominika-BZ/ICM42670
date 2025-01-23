@@ -1,32 +1,30 @@
 #pragma once
 
-#include "fwd.hpp"
 #include <cstdint>
+#include "fwd.hpp"
 
 
 namespace i2c
 {
+//hardware layer of the driver
+typedef struct i2c_instance_t
+{
+  /* data */
+};
 
-    typedef struct
-    {
-        //hardware instance
 
-    }i2c_instance_t;
+class I2C
+{
+ public:
+  I2C(i2c_instance_t& i2cInstance);
 
-    class I2C
-    {
-        public:
+  void Initialize();
 
-        I2C(i2c_instance_t& i2cInstance);
+  bool Write(std::uint8_t address, std::uint8_t* inputData);
+  bool Read(std::uint8_t address, std::uint8_t* outputData);
+  bool WriteRead(std::uint8_t address, std::uint8_t* outputData);
 
-        void Initialize();
-
-        int Write(std::uint8_t address, char *data, int length);
-        int Read(std::uint8_t address, char *data, int length);
-
-        private:
-
-        i2c_instance_t &_i2cInstance;
-
-    };
+ private:
+  i2c_instance_t& _i2cInstance;
+};
 }
