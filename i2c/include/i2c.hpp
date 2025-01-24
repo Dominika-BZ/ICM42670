@@ -3,15 +3,15 @@
 #include <cstdint>
 #include "fwd.hpp"
 
-
 namespace i2c
 {
-//hardware layer of the driver
+
+//Hardware layer of the driver
+//Should be another file
 typedef struct i2c_instance_t
 {
-  /* data */
+  //
 };
-
 
 class I2C
 {
@@ -20,9 +20,8 @@ class I2C
 
   void Initialize();
 
-  bool Write(std::uint8_t address, std::uint8_t* inputData);
-  bool Read(std::uint8_t address, std::uint8_t* outputData);
-  bool WriteRead(std::uint8_t address, std::uint8_t* outputData);
+  bool Write(std::uint8_t _address, std::uint8_t reg, std::uint8_t* inputData);
+  bool Read(std::uint8_t _address, std::uint8_t reg, std::uint8_t* outputData);
 
  private:
   i2c_instance_t& _i2cInstance;

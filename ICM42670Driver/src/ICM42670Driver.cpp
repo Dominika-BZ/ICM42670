@@ -1,10 +1,12 @@
 #include "ICM42670Driver.hpp"
+#include <array>
 #include <cstdint>
+
 
 namespace icm
 {
 
-enum struct Registers : std::uint8_t  // underlyingtype?
+enum struct Registers : std::uint8_t
 {
   ACCEL_DATA_X1 = 0x0b,
   ACCEL_DATA_X0 = 0x0c,
@@ -30,10 +32,10 @@ ICM42670Driver::ICM42670Driver(i2c::I2C& i2cDriver, std::uint8_t address)
 
 bool ICM42670Driver::Initialize()
 {
-  // uproszczenie - domyslnie uzytkownik wybiera zestaw konfiguracji wedlug datasheet 15.26
-  std::uint8_t configuration = 0b00001111;
-  //constexpr std::array config{{Registers::PWR_MGMT0}, configuration};
-  //return _i2cDriver.Write(_address, &config);
+  std::uint8_t configValue = 0b00001111;
+
+  return _i2cDriver.Write(
+      _address, static_cast<std::uint8_t>(Registers::PWR_MGMT0), &configValue);
 }
 
 bool ICM42670Driver::ConfigureGyro(const GyroConfiguration& config)
@@ -42,9 +44,26 @@ bool ICM42670Driver::ConfigureGyro(const GyroConfiguration& config)
   configValue |= static_cast<std::uint8_t>(config.gyroScale);
   configValue |= static_cast<std::uint8_t>(config.gyroRate);
 
-  //auto result = _i2cDriver.Write(_address, &configValue);  // na przyklad
+  auto result = _i2cDriver.Write(
+      _address, static_cast<std::uint8_t>(Registers::GYRO_CONFIG0),
+      &configValue);
 
-  //return result;
+  return result;
 }
+
+bool ICM42670Driver::ConfigureAccel(const AccelConfiguration& config)
+{
+  std::uint8_t configValue = 0;
+  configValue |= static_cast<std::uint8_t>(config.accelScale);
+  configValue |= static_cast<std::uint8_t>(config.accelRate);
+
+  auto result = _i2cDriver.Write(
+      _address, static_cast<std::uint8_t>(Registers::ACCEL_CONFIG0),
+      &configValue);
+
+  return result;
+}
+
+imuXYZ ICM42670Driver::GetAccelData() {}
 
 }

@@ -16,15 +16,6 @@ enum struct ConfigGyroScale : std::uint8_t
   GyroScale250DPS = 0b01100000
 };
 
-// datasheet 15.28
-enum struct ConfigAccelScale : std::uint8_t
-{
-  AccelScale16G = 0b00000000,
-  AccelScale8G = 0b00100000,
-  AccelScale4G = 0b01000000,
-  AccelScale2G = 0b01100000
-};
-
 // datasheet
 enum struct ConfigGyroRate : std::uint8_t
 {
@@ -38,7 +29,15 @@ enum struct ConfigGyroRate : std::uint8_t
   SensorRate12p5Hz = 0b00001100
 };
 
-//TODO: do uzupelnienia
+// datasheet 15.28
+enum struct ConfigAccelScale : std::uint8_t
+{
+  AccelScale16G = 0b00000000,
+  AccelScale8G = 0b00100000,
+  AccelScale4G = 0b01000000,
+  AccelScale2G = 0b01100000
+};
+
 enum struct ConfigAccelRate : std::uint8_t
 {
   SensorRate1p6kHz = 0b00000101,
@@ -48,8 +47,10 @@ enum struct ConfigAccelRate : std::uint8_t
   SensorRate100Hz = 0b00001001,
   SensorRate50Hz = 0b00001010,
   SensorRate25Hz = 0b00001011,
-  SensorRate12p5Hz = 0b00001100
-
+  SensorRate12p5Hz = 0b00001100,
+  SensorRate6p25Hz = 0b00001101,
+  SensorRate3p125Hz = 0b00001110,
+  SensorRate1p5625Hz = 0b00001111
 };
 
 // user gyro configuration
@@ -65,6 +66,13 @@ struct AccelConfiguration
   ConfigAccelRate accelRate;
 };
 
+typedef struct
+{
+  std::uint8_t x;
+  std::uint8_t y;
+  std::uint8_t z;
+} imuXYZ;
+
 class ICM42670Driver
 {
  public:
@@ -72,13 +80,14 @@ class ICM42670Driver
 
   ICM42670Driver(i2c::I2C& i2cDriver, std::uint8_t address);
 
+  // uproszczenie - domyslnie uzytkownik wybiera zestaw konfiguracji wedlug datasheet 15.26
   bool Initialize();
 
   bool ConfigureGyro(const GyroConfiguration& config);
 
   bool ConfigureAccel(const AccelConfiguration& config);
 
-  int GetData();
+  imuXYZ GetAccelData();
 
  private:
   i2c::I2C& _i2cDriver;
