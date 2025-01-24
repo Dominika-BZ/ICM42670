@@ -29,7 +29,7 @@ namespace icm
 
   bool ICM42670Driver::Initialize()
   {
-    std::uint8_t configValue = 0b00001111;
+    std::uint8_t configValue = 0b00001111; // Example config value
 
     return _i2cDriver.Write(
         _address, static_cast<std::uint8_t>(Registers::PWR_MGMT0), &configValue);
@@ -61,6 +61,56 @@ namespace icm
     return result;
   }
 
-  imuXYZ ICM42670Driver::GetAccelData() {}
+  imuXYZ ICM42670Driver::GetAccelData()
+  {
+    // TODO: Sprawdzanie DATA_RDY_INT
+
+    // TODO: Przekształcenie wartości zmiennoprzecinkowych i ujemnych w symulatorze
+    // Fixed point?
+
+    std::uint8_t buffer[0];
+    imuXYZ rawData = {0, 0, 0};
+    imuXYZ sensorData = {0, 0, 0};
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_X1), buffer))
+    {
+      rawData.x = buffer[0] << 8;
+    }
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_X0), buffer))
+    {
+      rawData.x |= buffer[0];
+    }
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_Y1), buffer))
+    {
+      rawData.y = buffer[0] << 8;
+    }
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_Y0), buffer))
+    {
+      rawData.y |= buffer[0];
+    }
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_Z1), buffer))
+    {
+      rawData.z = buffer[0] << 8;
+    }
+
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::ACCEL_DATA_Z0), buffer))
+    {
+      rawData.z |= buffer[0];
+    }
+
+    std::uint8_t configValue; // configValue z ConfigAccel
+
+    // TODO: Przeliczanie wartości w zależności od ustawień(rozdzielczość urządzenia?)
+
+    sensorData.x = rawData.x / configValue;
+    sensorData.y = rawData.y / configValue;
+    sensorData.z = rawData.z / configValue;
+
+    return sensorData;
+  }
 
 }
