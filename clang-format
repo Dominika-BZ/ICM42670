@@ -1,0 +1,21 @@
+﻿---
+BasedOnStyle: LLVM
+AlignAfterOpenBracket: DontAlign
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BreakBeforeBraces: Allman
+ColumnLimit: '80'
+ContinuationIndentWidth: '4'
+IndentWidth: '4'
+Language: Cpp
+MaxEmptyLinesToKeep: '2'
+NamespaceIndentation: All
+ObjCBlockIndentWidth: '0'
+PointerAlignment: Left
+SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeParens: Never
+SpaceInEmptyParentheses: 'false'
+SpacesInParentheses: 'false'
+SpacesInSquareBrackets: 'false'
+TabWidth: '4'
+...
