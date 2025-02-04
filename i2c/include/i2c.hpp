@@ -12,7 +12,7 @@ namespace i2c
    */
 
   // Hardware layer of the driver - should be another file.
-  typedef struct i2c_instance_t
+  struct i2c_instance_t
   {
   };
 

@@ -112,6 +112,11 @@ namespace icm
     bool Initialize();
 
     /**
+     * @brief Function to stop data acquisition.
+     */
+    bool StopAcquisition();
+
+    /**
      * @brief Sets the data acquisition options of the gyroscope.
      * Read datasheet chapter 15.27 for configuration values.
      * @param config Configuration values from GyroConfiguration.

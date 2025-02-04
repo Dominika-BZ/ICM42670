@@ -35,6 +35,14 @@ namespace icm
         _address, static_cast<std::uint8_t>(Registers::PWR_MGMT0), &configValue);
   }
 
+  bool ICM42670Driver::StopAcquisition()
+  {
+    std::uint8_t configValue = 0b01000000;
+
+    return _i2cDriver.Write(
+        _address, static_cast<std::uint8_t>(Registers::PWR_MGMT0), &configValue);
+  }
+
   bool ICM42670Driver::ConfigureGyro(const GyroConfiguration &config)
   {
     std::uint8_t configValue = 0;
@@ -63,10 +71,12 @@ namespace icm
 
   imuXYZ ICM42670Driver::GetAccelData()
   {
-    // TODO: Sprawdzanie DATA_RDY_INT
+    std::uint8_t statusValue = 0b00000001;
 
-    // TODO: Przekształcenie wartości zmiennoprzecinkowych i ujemnych w symulatorze
-    // Fixed point?
+    if (_i2cDriver.Read(_address, static_cast<std::uint8_t>(Registers::INT_STATUS_DRDY), &statusValue))
+    {
+      // Czytanie rejestrów
+    }
 
     std::uint8_t buffer[0];
     imuXYZ rawData = {0, 0, 0};
