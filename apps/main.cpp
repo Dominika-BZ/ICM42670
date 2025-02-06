@@ -2,6 +2,7 @@
 #include "ICM42670Driver.hpp"
 #include "i2c.hpp"
 #include "hardware.hpp"
+#include "asio.hpp"
 
 hw::Hardware hardware;
 

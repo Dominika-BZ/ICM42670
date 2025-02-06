@@ -7,7 +7,7 @@ target_link_libraries(main PRIVATE ICM42670Driver)
 target_link_libraries(main PRIVATE i2c)
 
 target_include_directories(main PUBLIC ${PROJECT_SOURCE_DIR}/include)
+include_directories("D:/Downloads/asio-1.30.2/asio-1.30.2/include")
 
 include(CTest)
 enable_testing()
-
