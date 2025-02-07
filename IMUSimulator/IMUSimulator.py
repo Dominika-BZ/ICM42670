@@ -1,6 +1,6 @@
 import csv
 import socket
-import json
+import struct
 
 #To make python find the csv file:
 import os    
@@ -14,7 +14,8 @@ class IMUSimulator:
 
     def load_data(self, csv_file):
         with open(csv_file, 'r') as file:
-            reader = csv.DictReader(file)
+            reader = csv.reader(file)
+            headers = next(reader)
             return [row for row in reader]
         
     def get_next_data(self):
@@ -24,13 +25,37 @@ class IMUSimulator:
         self.pointer += 1
         return data
     
-    def handle_request(self, request):
-        if request['action'] == 'read':
-            data = self.get_next_data()
-            if data:
-                return json.dumps(data)
-            else:
-                return json.dumps({"error": "End of data"})
+    def data_to_raw(self, value, range_max):
+            raw_value = int((value / range_max) * 32768)
+            return raw_value
+        
+    def handle_request(self, client_socket):
+        while True:
+
+            request = client_socket.recv(1024).decode('utf-8')
+
+            if not request:
+                break
+
+            if request == 'GET_ACCEL_DATA':
+                acc_range_max = 2.0
+                try:
+                    row = self.get_next_data()
+                    acc_x = float(row[0])
+                    acc_y = float(row[1])
+                    acc_z = float(row[2])
+
+                    raw_acc_x = self.data_to_raw(acc_x, acc_range_max)
+                    raw_acc_y = self.data_to_raw(acc_y, acc_range_max)
+                    raw_acc_z = self.data_to_raw(acc_z, acc_range_max)
+
+                    response = struct.pack('hhh', raw_acc_x, raw_acc_y, raw_acc_z)
+                    client_socket.send(response)
+
+                except StopIteration:
+                    client_socket.send(b'EOF')
+
+        client_socket.close()
             
 class IMUServer:
     def __init__(self, host, port, imu_simulator):
@@ -46,17 +71,9 @@ class IMUServer:
 
             while True:
                 client_socket, _ = server_socket.accept()
-                with client_socket:
-                    data = client_socket.recv(1024)
-                    while True:
-                        try:
-                            request = json.loads(data.decode())
-                            response = self.imu_simulator.handle_request(request)
-                            client_socket.sendall(response.encode())
-                        except:
-                            client_socket.sendall(json.dumps({"Error: Invalid json"}).encode())
-
-
+                print(f"Connected with {client_socket}")
+                self.imu_simulator.handle_request(client_socket)
+                       
 if __name__ == "__main__":
     imu_simulator = IMUSimulator('2023-01-16-15-33-09-imu.csv')
     server = IMUServer('127.0.0.1', 65432, imu_simulator)
