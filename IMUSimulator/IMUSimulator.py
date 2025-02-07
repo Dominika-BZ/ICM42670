@@ -55,6 +55,24 @@ class IMUSimulator:
                 except StopIteration:
                     client_socket.send(b'EOF')
 
+            elif request == 'GET_GYRO_DATA':
+                gyro_range_max = 250.0
+                try:
+                    row = self.get_next_data()
+                    gyro_x = float(row[3])
+                    gyro_y = float(row[4])
+                    gyro_z = float(row[5])
+
+                    raw_gyro_x = self.data_to_raw(gyro_x, gyro_range_max)
+                    raw_gyro_y = self.data_to_raw(gyro_y, gyro_range_max)
+                    raw_gyro_z = self.data_to_raw(gyro_z, gyro_range_max)
+
+                    response = struct.pack('hhh', raw_gyro_x, raw_gyro_y, raw_gyro_z)
+                    client_socket.send(response)
+
+                except StopIteration:
+                    client_socket.send(b'EOF')
+
         client_socket.close()
             
 class IMUServer:
