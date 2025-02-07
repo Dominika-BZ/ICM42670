@@ -38,6 +38,14 @@ class IMUClient:
 
         print(f"Received gyroscope data: X = {gyro_x}, Y = {gyro_y}, Z = {gyro_z}")
         return gyro_x, gyro_y, gyro_z
+    
+    #Example how to get the IMU register format:
+    def format(self):
+        value = -13332
+        LSB = value & 0xFF
+        MSB = value >> 8
+        print(f"LSB: {LSB:08b}")
+        print(f"MSB: {MSB & 0xFF:08b}")
 
 if __name__ == "__main__":
     imu_client = IMUClient('127.0.0.1', 65432)
